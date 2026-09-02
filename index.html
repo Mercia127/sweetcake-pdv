@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SweetCake PDV</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="style.css">
+ <link rel="manifest" href="manifest.json">
+
+
+</head>
+<body>
+<div id="loginTela" class="loginTela">
+
+<div class="loginBox">
+<h2>Login</h2>
+
+<input id="usuario" placeholder="Usuário">
+<input id="senha" type="password" placeholder="Senha">
+
+<button onclick="fazerLogin()">
+Entrar
+</button>
+
+</div>
+</div>
+
+<div class="topo">
+<div class="topoLogo">
+    <img src="logo.jpeg" width="60">
+    <span>SweetCake</span>
+</div>
+<span id="hora"></span>
+</div>
+
+<div class="container">
+<div class="menu">
+<button onclick="abrirProdutos()">Produtos / Estoque</button>
+<button onclick="abrirClientes()">👥 Clientes</button>
+<button onclick="abrirFiado()">📒 Fiado</button>
+<button onclick="abrirAvulso()">💲 Venda Avulsa</button>
+<button onclick="abrirCaixa()">🔓 Abrir Caixa</button>
+<button onclick="fecharCaixa()">🔒 Fechar Caixa</button>
+<button onclick="fazerSangria()">💸 Sangria</button>
+<button onclick="abrirRelatorio()">📊 Histórico de Vendas</button>
+<button onclick="abrirGestao()">🎯 Metas / Gestão</button>
+<button onclick="fecharMes()">🔒 Fechar Mês</button>
+<button onclick="abrirHistoricoFechamentos()">📚 Meses Fechados</button>
+<button onclick="abrirConfiguracoesTeste()">⚙ Configurações</button>
+<button onclick="cancelarItemVenda()">❌ Cancelar Item</button>
+<button onclick="cancelarUltimaVenda()">❌ Cancelar Última Venda</button>
+<button onclick="fazerBackup()">💾 Backup</button>
+<button onclick="importarBackup()">📥 Importar Backup</button>
+<button onclick="abrirGestao()">🎯 Metas / Gestão</button>
+</div>
+
+<div class="conteudo">
+
+<div class="cards">
+<div class="card">Produtos<br><b id="cProd">0</b></div>
+<div class="card">Itens<br><b id="cItens">0</b></div>
+<div class="card">Total<br><b id="cTotal">0</b></div>
+<div class="card">Vendas<br><b id="cVenda">0</b></div>
+<div class="card">Fiado<br><b id="cFiado">0</b></div>
+</div>
+
+<input id="busca" placeholder="Código | 30*1 | valor" autofocus />
+
+<div id="gridProdutos" class="grid"></div>
+
+<table class="tabela">
+<thead>
+<tr>
+<th>Img</th>
+<th>Cód</th>
+<th>Produto</th>
+<th>Qtd</th>
+<th>Total</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="lista"></tbody>
+</table>
+
+<div class="total">
+R$ <span id="total">0.00</span>
+</div>
+
+<div id="ultimaVenda" style="
+background:#fff;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+font-size:16px;
+box-shadow:0 0 5px rgba(0,0,0,0.1);
+">
+🧾 Última venda: Nenhuma
+</div>
+
+</div>
+</div>
+
+<!-- PAGAMENTO -->
+<div class="pagamento">
+
+<h3>💳 Pagamento</h3>
+
+<button onclick="setForma('Dinheiro')">
+F1 Dinheiro
+</button>
+
+<button onclick="setForma('Pix')">
+F2 Pix
+</button>
+
+<button onclick="setForma('Cartão')">
+F3 Cartão
+</button>
+
+<button onclick="setForma('Fiado')">
+F4 Fiado
+</button>
+
+<div class="valor-total">
+R$ <span id="totalPagamento">0.00</span>
+</div>
+
+<input id="valorPago" placeholder="Valor recebido">
+
+<div class="troco-grande">
+Troco: R$ <span id="troco">0.00</span>
+</div>
+
+<button onclick="finalizarVenda()">
+Enter Finalizar Venda
+</button>
+
+</div>
+
+<!-- PRODUTOS -->
+<div class="modal" id="mProdutos" onclick="document.getElementById('nome').focus()">
+<div class="box">
+
+<h3>Cadastro Produto</h3>
+
+<input id="nome" placeholder="Nome">
+<input id="codigo" placeholder="Código ou leia com leitor">
+<input id="preco" placeholder="Preço">
+<input id="estoque" placeholder="Estoque">
+<input id="img" placeholder="Imagem URL">
+
+<button onclick="salvarProduto()">
+Salvar
+</button>
+
+<div id="listaProdutos"></div>
+
+<button onclick="fechar('mProdutos')">
+Fechar
+</button>
+
+</div>
+</div>
+
+<!-- FIADO -->
+<div class="modal" id="mFiado">
+<div class="box">
+
+<h3>Fiado</h3>
+
+<div id="listaFiado"></div>
+
+<button onclick="fechar('mFiado')">
+Fechar
+</button>
+
+</div>
+</div>
+
+<!-- RELATÓRIO -->
+<div class="modal" id="mRel">
+<div class="box">
+
+<h3>Relatórios</h3>
+
+<input type="date" id="filtroData">
+
+<button onclick="filtrarRelatorioData()">
+🔍 Pesquisar Data
+</button>
+
+<canvas id="graficoDia"></canvas>
+<canvas id="graficoMes"></canvas>
+
+<button onclick="fechar('mRel')">
+Fechar
+</button>
+
+</div>
+</div>
+
+
+<!-- GESTÃO / METAS (ADMIN) -->
+<div class="modal" id="mGestao">
+ <div class="box" style="max-width:760px;width:92%;max-height:90vh;overflow:auto;">
+  <h3>🎯 Gestão e Metas</h3>
+  <p style="font-size:13px;color:#555">Área exclusiva da administração. A meta-base de R$ 4.000 permanece fixa; a meta do mês pode ser alterada.</p>
+  <div id="gestaoConteudo"></div>
+  <button onclick="fechar('mGestao')">Fechar</button>
+ </div>
+</div>
+
+<!-- VENDA AVULSA -->
+<div class="modal" id="mAvulso">
+<div class="box">
+
+<h3>Venda Avulsa</h3>
+
+<input id="valorAvulso" placeholder="Valor">
+
+<button onclick="confirmarAvulso()">
+Confirmar
+</button>
+
+<button onclick="fechar('mAvulso')">
+Fechar
+</button>
+
+</div>
+</div>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+const firebaseConfig = {
+
+ apiKey: "AIzaSyDqFEkhp7ZN2Kv00T0lh52dRGS7SfwA_v8",
+
+ authDomain: "sweetcake-pdv-8a43c.firebaseapp.com",
+
+ projectId: "sweetcake-pdv-8a43c",
+
+ storageBucket: "sweetcake-pdv-8a43c.firebasestorage.app",
+
+ messagingSenderId: "187333389999",
+
+ appId: "1:187333389999:web:9cfb5aac70c2407c5dee5a",
+
+ measurementId: "G-ZNXNE0RTPB"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+window.firebaseApp = app;
+
+</script>
+<script src="app.js"></script><script>
+function abrirConfiguracoesTeste(){
+  alert("⚙ Configurações\n\nAs configurações administrativas e a troca de senha serão colocadas nesta área.");
+}
+</script>
+
+<div id="mClientes" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+z-index:999;
+">
+
+<div style="
+background:#fff;
+width:90%;
+max-width:500px;
+padding:20px;
+border-radius:12px;
+">
+
+<h2>👥 Clientes</h2>
+
+<input id="clienteNome" placeholder="Nome"
+style="width:100%;padding:10px;margin-bottom:10px;">
+
+<input id="clienteTelefone" placeholder="Telefone"
+style="width:100%;padding:10px;margin-bottom:10px;">
+
+<input id="clienteEndereco" placeholder="Endereço"
+style="width:100%;padding:10px;margin-bottom:10px;">
+
+<button onclick="salvarCliente()">
+Salvar Cliente
+</button>
+
+<button onclick="fechar('mClientes')">
+Fechar
+</button>
+
+<hr>
+
+<div id="listaClientes"></div>
+
+</div>
+</div>
+<script>
+
+if("serviceWorker" in navigator){
+
+ navigator.serviceWorker.register("service-worker.js")
+ .then(() => console.log("Service Worker ativo"));
+
+}
+
+</script>
+</body>
+</html>

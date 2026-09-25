@@ -887,12 +887,12 @@ function listarFiados(){
     ${telefone ? telefone+'<br>' : ''}
     <b style="font-size:17px">Dívida: R$ ${valor.toFixed(2)}</b><br><br>
 
-    <button onclick="receberFiado(${JSON.stringify(nome)})"
+   <button onclick="receberFiado(decodeURIComponent('${encodeURIComponent(nome)}'))"
      style="background:#22c55e;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer">
      💰 Receber
     </button>
 
-    <button onclick="verHistoricoClienteFiado(${JSON.stringify(nome)})"
+   <button onclick="verHistoricoClienteFiado(decodeURIComponent('${encodeURIComponent(nome)}'))"
      style="margin-left:6px;padding:8px 12px;border-radius:6px;cursor:pointer">
      📜 Histórico
     </button>

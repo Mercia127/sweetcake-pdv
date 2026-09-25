@@ -997,6 +997,15 @@ function verHistoricoClienteFiado(cliente){
  alert(texto);
 }
 
+function resumoHoje(){
+  const hoje = new Date();
+  return historico.filter(v=>{
+    const d = new Date(v.data);
+    return d.getFullYear() === hoje.getFullYear() &&
+           d.getMonth() === hoje.getMonth() &&
+           d.getDate() === hoje.getDate();
+  });
+}
 function atualizar(){
 
  const elLista = document.getElementById('lista');
@@ -1055,12 +1064,13 @@ function atualizar(){
 
  // Os cards Total e Vendas mostram o acumulado do período ativo (mês),
  // enquanto Itens continua mostrando os itens da venda em andamento.
- let resumoAtual = resumoPeriodo();
- elTotalMes.innerText = Number(resumoAtual.total || 0).toFixed(2);
+ let vendasHoje = resumoHoje();
+let totalHoje = vendasHoje.reduce((s,v)=>s + Number(v.total || 0), 0);
 
+elTotalMes.innerText = totalHoje.toFixed(2);
  elProdutos.innerText = produtos.length;
 
- elVendas.innerText = resumoAtual.vendas;
+elVendas.innerText = vendasHoje.length;
 
  elFiado.innerText = Object.keys(fiado).length;
 

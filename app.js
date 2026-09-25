@@ -34,6 +34,7 @@ let sangriasCaixa = JSON.parse(localStorage.getItem('sangriasCaixa')) || {
  dinheiro:0,
  pix:0
 };
+let suprimentos = JSON.parse(localStorage.getItem('suprimentos')) || [];
 
 let caixaAberto = JSON.parse(localStorage.getItem('caixaAberto')) || false;
 let contadorVendasCaixa = Number(localStorage.getItem('contadorVendasCaixa') || 0);
